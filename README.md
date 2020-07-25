@@ -3,6 +3,11 @@
 This is for various data science project that I did.
 
 
+## Digit recognition
+Used Keras, resulting in 404/2971 in leaderboard. 
+
+## House price prediction
+Used XGboost, resulting in 1521/5120 in leaderboard.
 
 
 ## Covid prediction
