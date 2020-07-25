@@ -36,39 +36,39 @@ y = data_filled[['new_case']]
 
 # %%
 # Graph data
-fig, axes = plt.subplots(1, 2, figsize=(15,4))
+# fig, axes = plt.subplots(1, 2, figsize=(15,4))
 
-fig = sm.graphics.tsa.plot_acf(data_filled.iloc[1:]['new_case'], lags=40, ax=axes[0])
-fig = sm.graphics.tsa.plot_pacf(data_filled.iloc[1:]['new_case'], lags=40, ax=axes[1])
+# fig = sm.graphics.tsa.plot_acf(data_filled.iloc[1:]['new_case'], lags=40, ax=axes[0])
+# fig = sm.graphics.tsa.plot_pacf(data_filled.iloc[1:]['new_case'], lags=40, ax=axes[1])
 
 # %% testing parameters
-import itertools
+# import itertools
 
-p = d = q = range(0, 3)
-pdq = list(itertools.product(p, d, q))
-seasonal_pdq = [(x[0], x[1], x[2], 7) for x in list(itertools.product(p, d, q))]
-print('Examples of parameter combinations for Seasonal ARIMA...')
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
-print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
-print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
+# p = d = q = range(4, 6)
+# pdq = list(itertools.product(p, d, q))
+# seasonal_pdq = [(x[0], x[1], x[2], 7) for x in list(itertools.product(p, d, q))]
+# print('Examples of parameter combinations for Seasonal ARIMA...')
+# print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
+# print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
+# print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
+# print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
 
-for param in pdq:
-    for param_seasonal in seasonal_pdq:
-        try:
-            mod = sm.tsa.statespace.SARIMAX(y,
-                                            order=param,
-                                            seasonal_order=param_seasonal,
-                                            enforce_stationarity=False,
-                                            enforce_invertibility=False)
-            results = mod.fit()
-            print('ARIMA{}x{}7 - AIC:{}'.format(param, param_seasonal, results.aic))
-        except:
-            continue
+# for param in pdq:
+#     for param_seasonal in seasonal_pdq:
+#         try:
+#             mod = sm.tsa.statespace.SARIMAX(y,
+#                                             order=param,
+#                                             seasonal_order=param_seasonal,
+#                                             enforce_stationarity=False,
+#                                             enforce_invertibility=False)
+#             results = mod.fit()
+#             print('ARIMA{}x{}7 - AIC:{}'.format(param, param_seasonal, results.aic))
+#         except:
+#             continue
 
 # %%
-mod = sm.tsa.statespace.SARIMAX(endog = y, exog=data_filled[['VIC_Tests']],
-                                order=(2, 2, 2),
+mod = sm.tsa.statespace.SARIMAX(endog = y,
+                                order=(6, 4, 5),
                                 seasonal_order=(2,2,2, 7),
                                 enforce_stationarity=True,
                                 enforce_invertibility=False)
@@ -87,7 +87,7 @@ print(results.summary().tables[1])
 # %%
 plt.show()
 exog = data_filled[['VIC_Tests']][-7:]
-pred = results.get_prediction(start=pd.to_datetime('2020-03-22'), end=pd.to_datetime('2020-07-23'), dynamic=False, exog=exog)
+pred = results.get_prediction(start=pd.to_datetime('2020-03-22'), end=pd.to_datetime('2020-07-23'), dynamic=False)
 pred_ci = pred.conf_int()
 ax = y.plot(label='observed', style ='+')
 pred.predicted_mean.plot(ax=ax, label='Forecast', alpha=.7, figsize=(14, 7))
